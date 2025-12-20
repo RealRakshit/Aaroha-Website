@@ -33,16 +33,17 @@
     }
   });
 
-  // Dropdown on mouse hover
+    // Dropdown on mouse hover (Main) & Click (Submenus)
   $(document).ready(function () {
     function toggleNavbarMethod() {
       if ($(window).width() > 992) {
         $(".navbar .dropdown")
           .on("mouseover", function () {
-            $(".dropdown-toggle", this).trigger("click");
+            // Only trigger the main level toggle
+            $(this).find("> .dropdown-toggle").trigger("click");
           })
           .on("mouseout", function () {
-            $(".dropdown-toggle", this).trigger("click").blur();
+            $(this).find("> .dropdown-toggle").trigger("click").blur();
           });
       } else {
         $(".navbar .dropdown").off("mouseover").off("mouseout");
@@ -50,6 +51,22 @@
     }
     toggleNavbarMethod();
     $(window).resize(toggleNavbarMethod);
+
+    // Click Logic for nested submenus
+    $('.submenu-click').on('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation(); // Stops the main 'Our Projects' menu from closing
+
+      var $innerMenu = $(this).next('.dropdown-inner-menu');
+      
+      // Close other open submenus first (Optional)
+      $('.dropdown-inner-menu').not($innerMenu).slideUp();
+      $('.dropdown-submenu').not($(this).parent()).removeClass('submenu-active');
+
+      // Toggle current submenu
+      $innerMenu.slideToggle();
+      $(this).parent().toggleClass('submenu-active');
+    });
   });
 
   // Main carousel
